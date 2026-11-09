@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { loadApartment, loadCatalog, loadSampleLayout } from "../data/load";
 import { getModel } from "../data/model";
 import { draft } from "../systems/edit/draft";
-import { catalogMap, itemColor, nudgeItem } from "../systems/edit/placement";
+import { catalogMap, clampAxis, itemColor, nudgeItem, unitScale } from "../systems/edit/placement";
 import { input, toggleView } from "../systems/movement/input";
 import type { StartMode } from "../types/apartment";
 import type { CatalogFile } from "../types/catalog";
@@ -49,6 +49,8 @@ interface LayoutState {
   rotateSelected: (degrees: number) => void;
   removeSelected: () => void;
   duplicateSelected: () => void;
+  resizeSelected: (axis: 0 | 1 | 2 | "all", factor: number) => void;
+  resetSelectedScale: () => void;
   toggleLock: () => void;
   toggleSnap: () => void;
   undo: () => void;
@@ -59,7 +61,24 @@ interface LayoutState {
 }
 
 function cloneItems(items: PlacedItem[]): PlacedItem[] {
-  return items.map((item) => ({ ...item, position: [item.position[0], item.position[1]] as [number, number] }));
+  return items.map((item) => ({
+    ...item,
+    position: [item.position[0], item.position[1]] as [number, number],
+    scale: item.scale ? ([item.scale[0], item.scale[1], item.scale[2]] as [number, number, number]) : undefined,
+  }));
+}
+
+function readScale(value: unknown): [number, number, number] | undefined {
+  if (!Array.isArray(value) || value.length !== 3 || !value.every((entry) => typeof entry === "number" && Number.isFinite(entry))) {
+    return undefined;
+  }
+  const scale: [number, number, number] = [
+    clampAxis(1, value[0], false),
+    clampAxis(1, value[1], false),
+    clampAxis(1, value[2], false),
+  ];
+  if (scale[0] === 1 && scale[1] === 1 && scale[2] === 1) return undefined;
+  return scale;
 }
 
 function knownIds(): Set<string> {
@@ -79,6 +98,8 @@ export function sanitizeItems(value: unknown): PlacedItem[] {
     const z = row.position[1];
     if (typeof x !== "number" || typeof z !== "number" || typeof row.rotY !== "number") continue;
     const item: PlacedItem = { uid: row.uid, itemId: row.itemId, position: [x, z], rotY: row.rotY };
+    const scale = readScale(row.scale);
+    if (scale) item.scale = scale;
     if (typeof row.variantId === "string") item.variantId = row.variantId;
     if (typeof row.stackedOn === "string") item.stackedOn = row.stackedOn;
     if (typeof row.placeOn === "string") item.placeOn = row.placeOn;
@@ -209,6 +230,32 @@ export const useLayoutStore = create<LayoutState>((set) => ({
         ...remember(state),
         items: state.items.filter((item) => item.uid !== current.uid),
         selectedUid: null,
+      };
+    }),
+  resizeSelected: (axis, factor) =>
+    set((state) => {
+      const current = state.items.find((item) => item.uid === state.selectedUid);
+      const def = current ? catalogById.get(current.itemId) : undefined;
+      if (!current || !def || current.locked) return state;
+      const prev = unitScale(current.scale);
+      const next = prev.map((value, index) => {
+        if (axis !== "all" && index !== axis) return value;
+        return clampAxis(def.size[index], value * factor, index === 2);
+      }) as [number, number, number];
+      if (next[0] === prev[0] && next[1] === prev[1] && next[2] === prev[2]) return state;
+      const scale = next[0] === 1 && next[1] === 1 && next[2] === 1 ? undefined : next;
+      return {
+        ...remember(state),
+        items: state.items.map((item) => (item.uid === current.uid ? { ...item, scale } : item)),
+      };
+    }),
+  resetSelectedScale: () =>
+    set((state) => {
+      const current = state.items.find((item) => item.uid === state.selectedUid);
+      if (!current || current.locked || !current.scale) return state;
+      return {
+        ...remember(state),
+        items: state.items.map((item) => (item.uid === current.uid ? { ...item, scale: undefined } : item)),
       };
     }),
   duplicateSelected: () =>

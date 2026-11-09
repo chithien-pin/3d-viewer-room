@@ -21,6 +21,28 @@ export function itemColor(def: CatalogItem, variantId?: string): string {
   return variant?.color ?? def.color ?? "#c8c2b8";
 }
 
+export const SCALE_MIN = 0.4;
+export const SCALE_MAX = 2.2;
+const MAX_HEIGHT = 2.75;
+
+export function unitScale(scale?: [number, number, number]): [number, number, number] {
+  if (!scale) return [1, 1, 1];
+  return [scale[0], scale[1], scale[2]];
+}
+
+/** Kích thước mẫu nhân hệ số của món đã đặt. */
+export function scaledCatalog(def: CatalogItem, scale?: [number, number, number]): CatalogItem {
+  const [sx, sy, sz] = unitScale(scale);
+  if (sx === 1 && sy === 1 && sz === 1) return def;
+  return { ...def, size: [def.size[0] * sx, def.size[1] * sy, def.size[2] * sz] };
+}
+
+export function clampAxis(base: number, value: number, capHeight: boolean): number {
+  let next = Math.min(SCALE_MAX, Math.max(SCALE_MIN, value));
+  if (capHeight && base * next > MAX_HEIGHT) next = Math.max(SCALE_MIN, MAX_HEIGHT / base);
+  return Math.round(next * 100) / 100;
+}
+
 function deg(radians: number): number {
   return (radians * 180) / Math.PI;
 }
@@ -99,8 +121,9 @@ function hitsItem(
   const area = Math.max(0.01, (box.maxX - box.minX) * (box.maxZ - box.minZ));
   for (const other of items) {
     if (other.uid === ignoreUid || other.uid === hostUid) continue;
-    const def = catalog.get(other.itemId);
-    if (!def || def.isFlat || def.mount === "wall") continue;
+    const raw = catalog.get(other.itemId);
+    if (!raw || raw.isFlat || raw.mount === "wall") continue;
+    const def = scaledCatalog(raw, other.scale);
     const otherBox = footprint(def, other.position[0], other.position[1], other.rotY);
     const ox = overlap1d(box.minX, box.maxX, otherBox.minX, otherBox.maxX);
     const oz = overlap1d(box.minZ, box.maxZ, otherBox.minZ, otherBox.maxZ);
@@ -199,15 +222,19 @@ function findHost(
 }
 
 export function elevation(item: PlacedItem, items: PlacedItem[], catalog: Map<string, CatalogItem>, depth = 0): number {
-  const def = catalog.get(item.itemId);
-  if (!def) return 0;
-  if (def.mount === "wall") return def.mountHeight ?? def.size[2] / 2;
+  const raw = catalog.get(item.itemId);
+  if (!raw) return 0;
+  const def = scaledCatalog(raw, item.scale);
+  if (def.mount === "wall") return raw.mountHeight ?? def.size[2] / 2;
   let base = 0;
   const hostId = item.placeOn ?? item.stackedOn;
   if (hostId && depth < 4) {
     const host = items.find((entry) => entry.uid === hostId);
-    const hostDef = host ? catalog.get(host.itemId) : undefined;
-    if (host && hostDef) base = elevation(host, items, catalog, depth + 1) + hostDef.size[2] / 2;
+    const hostRaw = host ? catalog.get(host.itemId) : undefined;
+    if (host && hostRaw) {
+      const hostDef = scaledCatalog(hostRaw, host.scale);
+      base = elevation(host, items, catalog, depth + 1) + hostDef.size[2] / 2;
+    }
   }
   return base + def.size[2] / 2;
 }
@@ -218,8 +245,9 @@ export function assess(
   catalog: Map<string, CatalogItem>,
   model: ApartmentModel,
 ): { valid: boolean; y: number } {
-  const def = catalog.get(item.itemId);
-  if (!def) return { valid: false, y: 0 };
+  const raw = catalog.get(item.itemId);
+  if (!raw) return { valid: false, y: 0 };
+  const def = scaledCatalog(raw, item.scale);
   const [x, z] = item.position;
   const y = elevation(item, items, catalog);
   const box = footprint(def, x, z, item.rotY);
@@ -240,7 +268,9 @@ export function resolvePose(
   catalog: Map<string, CatalogItem>,
   snap: boolean,
   ignoreUid?: string,
+  scale?: [number, number, number],
 ): Pose {
+  const sized = scaledCatalog(def, scale);
   let px = x;
   let pz = z;
   let rot = rotY;
@@ -250,7 +280,7 @@ export function resolvePose(
       px = Math.round(x * 10) / 10;
       pz = Math.round(z * 10) / 10;
     }
-    const mounted = snapMount(px, pz, def, model.walls);
+    const mounted = snapMount(px, pz, sized, model.walls);
     if (mounted) {
       px = mounted.x;
       pz = mounted.z;
@@ -264,7 +294,7 @@ export function resolvePose(
       px = Math.round(x * 10) / 10;
       pz = Math.round(z * 10) / 10;
     }
-    const pulled = pullToWall(px, pz, rot, def, model.walls);
+    const pulled = pullToWall(px, pz, rot, sized, model.walls);
     px = pulled.x;
     pz = pulled.z;
   }
@@ -283,9 +313,9 @@ export function resolvePose(
   }
   if (def.stackableOn && !placeOn) {
     const host = findHost(px, pz, def.stackableOn, others, 1.4);
-    const hostDef = host ? catalog.get(host.itemId) : undefined;
-    if (host && hostDef) {
-      const rug = footprint(hostDef, host.position[0], host.position[1], host.rotY);
+    const hostRaw = host ? catalog.get(host.itemId) : undefined;
+    if (host && hostRaw) {
+      const rug = footprint(scaledCatalog(hostRaw, host.scale), host.position[0], host.position[1], host.rotY);
       if (px >= rug.minX && px <= rug.maxX && pz >= rug.minZ && pz <= rug.maxZ) stackedOn = host.uid;
     }
   }
@@ -295,11 +325,12 @@ export function resolvePose(
     itemId: def.id,
     position: [px, pz],
     rotY: rot,
+    scale,
     placeOn,
     stackedOn,
   };
   const { valid, y } = assess(probe, items, catalog, model);
-  const mounted = def.mount === "wall" ? snapMount(px, pz, def, model.walls) : null;
+  const mounted = def.mount === "wall" ? snapMount(px, pz, sized, model.walls) : null;
   return {
     x: px,
     z: pz,

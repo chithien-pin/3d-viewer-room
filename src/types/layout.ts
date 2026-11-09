@@ -6,6 +6,8 @@ export interface PlacedItem {
   position: [number, number];
   /** Độ, quanh trục Y. */
   rotY: number;
+  /** Hệ số [rộng, sâu, cao] so với kích thước mẫu. */
+  scale?: [number, number, number];
   stackedOn?: string;
   placeOn?: string;
   locked?: boolean;

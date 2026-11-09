@@ -1,27 +1,5 @@
 {
   "items": [
-    { "uid": "rug-1", "itemId": "rug_grey", "position": [2.1, 5.1], "rotY": 90 },
-    { "uid": "sofa-1", "itemId": "sofa_3", "position": [2.85, 5.1], "rotY": 90 },
-    { "uid": "coffee-1", "itemId": "coffee_table_round", "position": [2.1, 4.75], "rotY": 0, "stackedOn": "rug-1" },
-    { "uid": "coffee-2", "itemId": "coffee_table_round", "position": [2.1, 5.45], "rotY": 0, "stackedOn": "rug-1" },
-    { "uid": "tv-unit-1", "itemId": "tv_unit", "position": [0.45, 5.2], "rotY": -90 },
-    { "uid": "tv-1", "itemId": "tv_55", "position": [0.45, 5.2], "rotY": -90, "placeOn": "tv-unit-1" },
-    { "uid": "dining-table", "itemId": "dining_table_4", "position": [0.85, 2.7], "rotY": 0 },
-    { "uid": "chair-n1", "itemId": "dining_chair", "position": [0.5, 2.22], "rotY": 0 },
-    { "uid": "chair-n2", "itemId": "dining_chair", "position": [1.2, 2.22], "rotY": 0 },
-    { "uid": "chair-s1", "itemId": "dining_chair", "position": [0.5, 3.18], "rotY": 180 },
-    { "uid": "chair-s2", "itemId": "dining_chair", "position": [1.2, 3.18], "rotY": 180 },
-    { "uid": "bed-master", "itemId": "bed_queen", "variantId": "orange", "position": [7.55, 1.25], "rotY": 0 },
-    { "uid": "ns-master-l", "itemId": "nightstand", "position": [6.55, 0.75], "rotY": 0 },
-    { "uid": "ns-master-r", "itemId": "nightstand", "position": [8.55, 0.75], "rotY": 0 },
-    { "uid": "wardrobe-master", "itemId": "wardrobe_big", "position": [6.4, 1.8], "rotY": 90 },
-    { "uid": "bed-2", "itemId": "bed_queen", "variantId": "blue", "position": [7.4, 5.5], "rotY": 0 },
-    { "uid": "ns-bed2", "itemId": "nightstand", "position": [6.45, 5.05], "rotY": 0 },
-    { "uid": "ac-bed2", "itemId": "aircon", "position": [8.85, 4.7], "rotY": -90 },
-    { "uid": "bed-3", "itemId": "bed_single_plus", "position": [4.35, 6.05], "rotY": 180 },
-    { "uid": "desk-bed3", "itemId": "desk_long", "position": [5.2, 5.6], "rotY": 90 },
-    { "uid": "fridge-1", "itemId": "fridge", "position": [2.55, 2.65], "rotY": -90 },
-    { "uid": "stool-1", "itemId": "blue_stool", "position": [1.85, 2.55], "rotY": 15 },
-    { "uid": "plant-bal2", "itemId": "plant_big", "position": [8.15, 3.7], "rotY": 0 }
+    { "uid": "piano-1", "itemId": "digital_piano", "position": [1.15, 5.05], "rotY": -90 }
   ]
 }

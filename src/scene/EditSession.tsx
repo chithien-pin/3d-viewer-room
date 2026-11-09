@@ -57,23 +57,32 @@ export function EditSession({ model }: { model: ApartmentModel }) {
       return { x: hit.point.x, z: hit.point.z };
     };
 
-    const showDraft = (x: number, z: number, itemId: string, variantId: string | undefined, rotY: number, ignoreUid?: string) => {
+    const showDraft = (
+      x: number,
+      z: number,
+      itemId: string,
+      variantId: string | undefined,
+      rotY: number,
+      ignoreUid?: string,
+      scale?: [number, number, number],
+    ) => {
       const def = catalogById.get(itemId);
       const state = useLayoutStore.getState();
       if (!def) {
         draft.active = false;
         return;
       }
-      const pose = resolvePose(x, z, rotY, def, state.items, model, catalogById, state.snap, ignoreUid);
+      const pose = resolvePose(x, z, rotY, def, state.items, model, catalogById, state.snap, ignoreUid, scale);
+      const sized = scale ? [def.size[0] * scale[0], def.size[1] * scale[1], def.size[2] * scale[2]] : def.size;
       draft.active = true;
       draft.x = pose.x;
       draft.z = pose.z;
       draft.y = pose.y;
       draft.rotY = pose.rotY;
       draft.valid = pose.valid;
-      draft.w = def.size[0];
-      draft.h = def.size[2];
-      draft.d = def.size[1];
+      draft.w = sized[0];
+      draft.h = sized[2];
+      draft.d = sized[1];
       draft.color = variantColor(itemId, variantId);
       draft.placeOn = pose.placeOn;
       draft.stackedOn = pose.stackedOn;
@@ -89,7 +98,7 @@ export function EditSession({ model }: { model: ApartmentModel }) {
       if (drag) {
         const item = state.items.find((entry) => entry.uid === drag?.uid);
         if (!item) return;
-        showDraft(point.x + drag.ox, point.z + drag.oz, item.itemId, item.variantId, item.rotY, item.uid);
+        showDraft(point.x + drag.ox, point.z + drag.oz, item.itemId, item.variantId, item.rotY, item.uid, item.scale);
         return;
       }
       if (state.armed) showDraft(point.x, point.z, state.armed.itemId, state.armed.variantId, state.armed.rotY);

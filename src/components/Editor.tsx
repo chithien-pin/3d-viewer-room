@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { catalogById, catalogFile, useLayoutStore, variantColor } from "../store/useLayoutStore";
 import { draft } from "../systems/edit/draft";
+import type { CatalogItem } from "../types/catalog";
 import type { PlacedItem } from "../types/layout";
 
 const CATEGORIES: Record<string, string> = {
@@ -90,6 +91,8 @@ export function CatalogPanel() {
   const removeSelected = useLayoutStore((state) => state.removeSelected);
   const duplicateSelected = useLayoutStore((state) => state.duplicateSelected);
   const toggleLock = useLayoutStore((state) => state.toggleLock);
+  const resizeSelected = useLayoutStore((state) => state.resizeSelected);
+  const resetSelectedScale = useLayoutStore((state) => state.resetSelectedScale);
   const loadSample = useLayoutStore((state) => state.loadSample);
   const loadEmpty = useLayoutStore((state) => state.loadEmpty);
   const importItems = useLayoutStore((state) => state.importItems);
@@ -202,9 +205,18 @@ export function CatalogPanel() {
         {armed
           ? "Click sàn để đặt. Đỏ là bị kẹt hoặc ra ngoài căn. R xoay 90°, Shift+R xoay 15°."
           : selected && selectedDef
-            ? `${selectedDef.name}${selected.locked ? " · đang khóa" : ""}. Kéo để dời, R xoay, Delete xóa.`
+            ? `${selectedDef.name}${selected.locked ? " · đang khóa" : ""}. Kéo để dời, R xoay, ± đổi kích thước, Delete xóa.`
             : "Chọn một món bên trên, hoặc bấm vào đồ trong căn."}
       </div>
+      {selected && selectedDef && (
+        <SizeControls
+          def={selectedDef}
+          scale={selected.scale}
+          locked={selected.locked === true}
+          onResize={resizeSelected}
+          onReset={resetSelectedScale}
+        />
+      )}
       <div className="flex flex-wrap gap-1">
         <MiniButton label="Xóa" disabled={!selected || selected.locked} onClick={removeSelected} />
         <MiniButton label="Nhân bản" disabled={!selected} onClick={duplicateSelected} />
@@ -233,6 +245,86 @@ export function CatalogPanel() {
         />
       </div>
     </aside>
+  );
+}
+
+function SizeControls({
+  def,
+  scale,
+  locked,
+  onResize,
+  onReset,
+}: {
+  def: CatalogItem;
+  scale?: [number, number, number];
+  locked: boolean;
+  onResize: (axis: 0 | 1 | 2 | "all", factor: number) => void;
+  onReset: () => void;
+}) {
+  const axes: { axis: 0 | 1 | 2; label: string }[] = [
+    { axis: 0, label: "Rộng" },
+    { axis: 1, label: "Sâu" },
+    { axis: 2, label: "Cao" },
+  ];
+  const factor = scale ?? [1, 1, 1];
+  return (
+    <div className="rounded-xl bg-black/20 p-2">
+      <div className="mb-1 flex items-center justify-between">
+        <span className="text-[11px] font-semibold">Kích thước</span>
+        <button
+          type="button"
+          disabled={locked || !scale}
+          onClick={onReset}
+          className="text-[10px] font-semibold text-[#f4efe6]/70 disabled:opacity-40"
+        >
+          Mặc định
+        </button>
+      </div>
+      {axes.map(({ axis, label }) => (
+        <div key={label} className="mt-1 flex items-center gap-1">
+          <span className="w-8 text-[10px] text-[#f4efe6]/70">{label}</span>
+          <button
+            type="button"
+            disabled={locked}
+            onClick={() => onResize(axis, 1 / 1.1)}
+            className="h-6 w-6 rounded-full bg-white/10 text-sm leading-none disabled:opacity-40"
+            aria-label={`Giảm ${label}`}
+          >
+            −
+          </button>
+          <span className="min-w-0 flex-1 text-center text-[11px] tabular-nums">
+            {(def.size[axis] * factor[axis]).toFixed(2)} m
+          </span>
+          <button
+            type="button"
+            disabled={locked}
+            onClick={() => onResize(axis, 1.1)}
+            className="h-6 w-6 rounded-full bg-white/10 text-sm leading-none disabled:opacity-40"
+            aria-label={`Tăng ${label}`}
+          >
+            +
+          </button>
+        </div>
+      ))}
+      <div className="mt-2 flex gap-1">
+        <button
+          type="button"
+          disabled={locked}
+          onClick={() => onResize("all", 1 / 1.1)}
+          className="flex-1 rounded-full bg-white/10 px-2 py-1 text-[10px] font-semibold disabled:opacity-40"
+        >
+          Nhỏ đều
+        </button>
+        <button
+          type="button"
+          disabled={locked}
+          onClick={() => onResize("all", 1.1)}
+          className="flex-1 rounded-full bg-white/10 px-2 py-1 text-[10px] font-semibold disabled:opacity-40"
+        >
+          Lớn đều
+        </button>
+      </div>
+    </div>
   );
 }
 
