@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "name": "Vinhomes Grand Park - Glory Heights - GH1 - CH15",
+    "type": "2PN+1",
+    "netArea_m2": 63.3,
+    "grossArea_m2": 69.2,
+    "unit": "m",
+    "coordinateSystem": "Gốc (0,0) ở góc trên-trái mặt bằng 2D; x sang phải, z đi xuống, y hướng lên",
+    "bounds": { "width": 9.3, "depth": 7.4 },
+    "ceilingHeight": 2.9,
+    "wallThickness": { "exterior": 0.2, "interior": 0.1 }
+  },
+  "closedRooms": [
+    { "id": "wc1", "name": "WC 1", "rect": [2.95, 0.1, 1.55, 3.0], "floor": "slate_dark" },
+    { "id": "wc2", "name": "WC 2", "rect": [4.55, 0.1, 1.45, 3.0], "floor": "slate_dark" },
+    { "id": "master", "name": "Phòng ngủ 1", "rect": [6.0, 0.2, 3.1, 2.9], "floor": "wood_laminate" },
+    { "id": "bed2", "name": "Phòng ngủ 2", "rect": [5.65, 4.35, 3.5, 2.85], "floor": "wood_laminate" },
+    { "id": "bed3", "name": "Phòng ngủ 3 (+1)", "rect": [3.3, 4.35, 2.35, 2.85], "floor": "marble_white", "openSides": ["west", "north"] },
+    { "id": "balcony1", "name": "Lô gia 1", "rect": [0.2, 6.25, 3.0, 0.95], "floor": "slate_dark", "outdoor": true },
+    { "id": "balcony2", "name": "Lô gia 2", "rect": [7.15, 3.15, 2.0, 1.15], "floor": "slate_dark", "outdoor": true }
+  ],
+  "openZones": [
+    { "id": "kitchen", "name": "Phòng bếp", "rect": [0, 0, 2.95, 2.1], "floor": "marble_white" },
+    { "id": "dining", "name": "Phòng ăn", "rect": [0, 2.1, 2.95, 1.2], "floor": "marble_white" },
+    { "id": "living", "name": "Phòng khách", "rect": [0, 3.3, 3.3, 2.9], "floor": "marble_white" },
+    { "id": "hall", "name": "Hành lang", "rect": [3.3, 3.1, 3.85, 1.25], "floor": "marble_white" }
+  ],
+  "doors": [
+    { "id": "d_entry", "room": "kitchen", "wall": "north", "offset": 0.4, "width": 0.9, "height": 2.1, "swing": "in", "style": "entry_oak_darkstripe", "lock": "smart" },
+    { "id": "d_wc1", "room": "wc1", "wall": "south", "offset": 0.35, "width": 0.75, "height": 2.1, "swing": "in", "style": "oak" },
+    { "id": "d_wc2", "room": "wc2", "wall": "east", "offset": 1.7, "width": 0.8, "height": 2.1, "swing": "in", "style": "oak" },
+    { "id": "d_master", "room": "master", "wall": "south", "offset": 0.1, "width": 0.85, "height": 2.1, "swing": "in", "style": "oak" },
+    { "id": "d_bed2", "room": "bed2", "wall": "north", "offset": 0.1, "width": 0.85, "height": 2.1, "swing": "in", "style": "oak" },
+    { "id": "d_bal1", "room": "balcony1", "wall": "north", "offset": 0.5, "width": 2.0, "height": 2.4, "type": "sliding_glass", "frame": "black_aluminium" },
+    { "id": "d_bal2", "room": "balcony2", "wall": "west", "offset": 0.1, "width": 0.95, "height": 2.4, "type": "sliding_glass", "frame": "black_aluminium" }
+  ],
+  "windows": [
+    { "room": "master", "wall": "north", "offset": 0.7, "width": 1.6, "sill": 0.9, "height": 1.5, "frame": "black_aluminium", "curtain": "taupe_with_sheer" },
+    { "room": "bed2", "wall": "south", "offset": 0.7, "width": 1.6, "sill": 0.9, "height": 1.5, "frame": "black_aluminium", "curtain": "taupe_with_sheer" },
+    { "room": "bed3", "wall": "south", "offset": 0.4, "width": 1.5, "sill": 0.9, "height": 1.5, "frame": "black_aluminium", "curtain": "taupe_with_sheer" }
+  ],
+  "builtIns": [
+    { "id": "kitchen_L_base", "type": "kitchen_counter_L", "rects": [[1.4, 0.0, 1.55, 0.6], [2.35, 0.0, 0.6, 2.1]], "height": 0.85, "cabinet": "walnut", "countertop": "granite_black", "backsplash": "glass_lime" },
+    { "id": "kitchen_L_upper", "type": "kitchen_upper", "rects": [[1.4, 0.0, 1.55, 0.35], [2.6, 0.0, 0.35, 2.1]], "bottomY": 1.45, "topY": 2.3, "doors": ["cream_gloss", "glass_black_frame"] },
+    { "id": "fridge_tall_cabinet", "type": "tall_cabinet_with_niche", "rect": [2.3, 2.2, 0.65, 0.9], "height": 2.5, "cabinet": "walnut", "niche": { "width": 0.7, "height": 1.85 } }
+  ],
+  "spawn": { "position": [1.8, 0, 3.4], "facing": "south" },
+  "startMode": "furnished_sample"
+}

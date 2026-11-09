@@ -1,0 +1,29 @@
+{
+  "categories": ["living", "dining", "bedroom", "kitchen", "bathroom", "decor", "appliance"],
+  "items": [
+    { "id": "sofa_3", "name": "Sofa da 3 chỗ (cam/nâu)", "category": "living", "size": [2.1, 0.95, 0.85], "color": "#b8672c", "model": null },
+    { "id": "sofa_sage_2", "name": "Sofa vải 2 chỗ (xanh)", "category": "living", "size": [1.72, 0.9, 0.82], "color": "#8fa584", "model": null },
+    { "id": "coffee_table_round", "name": "Bàn trà tròn", "category": "living", "size": [0.8, 0.8, 0.45], "color": "#2b2b2b", "stackableOn": ["rug_grey"] },
+    { "id": "rug_grey", "name": "Thảm xám họa tiết", "category": "living", "size": [2.3, 1.6, 0.02], "color": "#8d8d8d", "isFlat": true },
+    { "id": "tv_unit", "name": "Kệ tivi", "category": "living", "size": [1.8, 0.4, 0.5], "color": "#3a2a22" },
+    { "id": "tv_55", "name": "Tivi 55 inch", "category": "appliance", "size": [1.23, 0.07, 0.72], "color": "#111111", "placeOn": ["tv_unit"] },
+    { "id": "dining_table_4", "name": "Bàn ăn 4 ghế", "category": "dining", "size": [1.4, 0.85, 0.75], "color": "#7a5a43" },
+    { "id": "dining_chair", "name": "Ghế ăn", "category": "dining", "size": [0.45, 0.5, 0.9], "color": "#9a6a45" },
+    { "id": "bed_queen", "name": "Giường đôi 1m6", "category": "bedroom", "size": [1.6, 2.0, 0.9], "variants": [
+      { "id": "orange", "color": "#d98a3d" }, { "id": "blue", "color": "#2f7fa3" }, { "id": "grey", "color": "#9a8f8f" } ] },
+    { "id": "bed_single_plus", "name": "Giường 1m4", "category": "bedroom", "size": [1.4, 2.0, 0.85], "color": "#a79b94" },
+    { "id": "nightstand", "name": "Tab đầu giường", "category": "bedroom", "size": [0.45, 0.4, 0.5], "color": "#5b3a29" },
+    { "id": "wardrobe_big", "name": "Tủ quần áo 1m8", "category": "bedroom", "size": [1.8, 0.6, 2.2], "color": "#5b3a29" },
+    { "id": "desk", "name": "Bàn làm việc", "category": "bedroom", "size": [1.2, 0.6, 0.75], "color": "#b99a76" },
+    { "id": "desk_long", "name": "Bàn dài kiêm kệ", "category": "bedroom", "size": [1.6, 0.6, 0.75], "color": "#7a5a43" },
+    { "id": "office_chair", "name": "Ghế làm việc", "category": "bedroom", "size": [0.55, 0.55, 0.95], "color": "#1f1f1f" },
+    { "id": "fridge", "name": "Tủ lạnh", "category": "kitchen", "size": [0.65, 0.65, 1.8], "color": "#bfc3c6", "snapTo": ["fridge_tall_cabinet"] },
+    { "id": "blue_stool", "name": "Ghế nhựa xanh", "category": "decor", "size": [0.3, 0.3, 0.45], "color": "#1f6fd1" },
+    { "id": "plant_big", "name": "Cây cảnh lớn", "category": "decor", "size": [0.5, 0.5, 1.2], "color": "#3f7f3f" },
+    { "id": "digital_piano", "name": "Đàn piano điện", "category": "decor", "size": [1.36, 0.48, 0.98], "color": "#1c1410", "model": null },
+    { "id": "aircon", "name": "Điều hòa treo tường", "category": "appliance", "size": [0.9, 0.22, 0.3], "color": "#f2f2f2", "mount": "wall", "mountHeight": 2.2 },
+    { "id": "wall_art", "name": "Tranh treo tường", "category": "decor", "size": [0.8, 0.03, 0.6], "color": "#c9b79c", "mount": "wall", "mountHeight": 1.5 },
+    { "id": "toilet", "name": "Bồn cầu", "category": "bathroom", "size": [0.4, 0.7, 0.75], "color": "#f5f5f5" },
+    { "id": "vanity_sink", "name": "Lavabo", "category": "bathroom", "size": [0.6, 0.45, 0.85], "color": "#f5f5f5" }
+  ]
+}

@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #c5e3f6;
+  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+}
+
+.nameplate {
+  position: relative;
+  background: #fff;
+  color: #3a332c;
+  border-radius: 999px;
+  padding: 3px 10px 4px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(60, 40, 20, 0.18);
+}
+
+.nameplate::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+canvas {
+  display: block;
+  touch-action: none;
+}
+
+.catalog-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.catalog-scroll::-webkit-scrollbar-thumb {
+  background: rgba(244, 239, 230, 0.28);
+  border-radius: 99px;
+}
